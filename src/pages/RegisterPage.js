@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
-import { alignPropType } from "react-bootstrap/esm/types";
 import Form from "react-bootstrap/Form";
 import api from "../utils/api";
 
@@ -20,7 +19,7 @@ const RegisterPage = () => {
         throw new Error("Password doesn't match.");
       }
       const response = await api.post("/user", { name, email, password });
-      if (response.status == 200) {
+      if (response.status === 200) {
         navigate("/login");
       } else {
         throw new Error(response.data.error);
