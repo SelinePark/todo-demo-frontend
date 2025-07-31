@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import TodoBoard from "../components/TodoBoard";
 import api from "../utils/api";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Container from "react-bootstrap/Container";
+import { Navbar, Nav, Button, Container, Row, Col } from "react-bootstrap";
 
-const TodoPage = () => {
+const TodoPage = ({ setUser }) => {
   const [todoList, setTodoList] = useState([]);
   const [todoValue, setTodoValue] = useState("");
+
+  const navigate = useNavigate();
 
   const getTasks = async () => {
     const response = await api.get("/tasks");
@@ -56,31 +57,50 @@ const TodoPage = () => {
       console.log("error", error);
     }
   };
-  return (
-    <Container>
-      <Row className="add-item-row">
-        <Col xs={12} sm={10}>
-          <input
-            type="text"
-            placeholder="할일을 입력하세요"
-            onChange={(event) => setTodoValue(event.target.value)}
-            className="input-box"
-            value={todoValue}
-          />
-        </Col>
-        <Col xs={12} sm={2}>
-          <button onClick={addTodo} className="button-add">
-            추가
-          </button>
-        </Col>
-      </Row>
 
-      <TodoBoard
-        todoList={todoList}
-        deleteItem={deleteItem}
-        toggleComplete={toggleComplete}
-      />
-    </Container>
+  const handleLogout = () => {
+    sessionStorage.removeItem("token");
+    setUser(null);
+    navigate("/login");
+  };
+
+  return (
+    <>
+      <Navbar bg="light" expand="lg">
+        <Container>
+          <Navbar.Brand href="/">Todo-demo</Navbar.Brand>
+          <Nav className="ms-auto">
+            <Button variant="outline-danger" onClick={handleLogout}>
+              log out
+            </Button>
+          </Nav>
+        </Container>
+      </Navbar>
+      <Container>
+        <Row className="add-item-row">
+          <Col xs={12} sm={10}>
+            <input
+              type="text"
+              placeholder="할일을 입력하세요"
+              onChange={(event) => setTodoValue(event.target.value)}
+              className="input-box"
+              value={todoValue}
+            />
+          </Col>
+          <Col xs={12} sm={2}>
+            <button onClick={addTodo} className="button-add">
+              추가
+            </button>
+          </Col>
+        </Row>
+
+        <TodoBoard
+          todoList={todoList}
+          deleteItem={deleteItem}
+          toggleComplete={toggleComplete}
+        />
+      </Container>
+    </>
   );
 };
 
