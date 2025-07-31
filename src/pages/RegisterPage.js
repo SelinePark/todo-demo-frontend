@@ -12,12 +12,28 @@ const RegisterPage = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const requiredFields = [
+    { value: name, label: "Name" },
+    { value: email, label: "Email" },
+    { value: password, label: "Password" },
+  ];
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
+      const missing = requiredFields.find((field) => !field.value);
+      if (missing) {
+        throw new Error(`${missing.label} is required.`);
+      }
+
+      if (!secPassword) {
+        throw new Error("Please re-enter your password.");
+      }
+
       if (password !== secPassword) {
         throw new Error("Password doesn't match.");
       }
+
       const response = await api.post("/user", { name, email, password });
       if (response.status === 200) {
         navigate("/login");
